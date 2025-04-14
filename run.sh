@@ -23,24 +23,23 @@ pip install -r requirements.txt -t /home/aistudio/external-libraries
 mkdir -p models
 mkdir -p output
 
-# Download BERT model if not already present
-if [ ! -d "/home/aistudio/models/bert-base-uncased" ]; then
-    echo "Downloading BERT model..."
-    python -c "
-import sys
-sys.path.append('/home/aistudio/external-libraries')
+# Install dependencies
+pip install paddlepaddle-gpu
+pip install transformers
+pip install pandas
+pip install tqdm
+
+# Download BERT model
+python3 -c "
 from transformers import AutoTokenizer, AutoModel
 tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 model = AutoModel.from_pretrained('bert-base-uncased')
-tokenizer.save_pretrained('/home/aistudio/models/bert-base-uncased')
-model.save_pretrained('/home/aistudio/models/bert-base-uncased')
+tokenizer.save_pretrained('models/bert-base-uncased')
+model.save_pretrained('models/bert-base-uncased')
 "
-else
-    echo "BERT model already exists"
-fi
 
 # Create symlinks to persistent directories
 ln -sf /home/aistudio/models/bert-base-uncased models/bert-base-uncased
 
 # Run the training script
-python run.py 
+python3 run.py 
