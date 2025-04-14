@@ -14,9 +14,15 @@ class BertClassifier(nn.Module):
             local_files_only=True
         )
         
-        # Classification head
-        self.dropout = nn.Dropout(0.1)
-        self.classifier = nn.Linear(768, config.NUM_LABELS)  # 768 is the hidden size of BERT
+        # Add dropout with higher rate for regularization
+        self.dropout = nn.Dropout(0.3)  # Increased from 0.1 to 0.3
+        
+        # Classification head with L2 regularization
+        self.classifier = nn.Linear(768, config.NUM_LABELS)
+        
+        # Initialize weights with smaller values
+        self.classifier.weight.data.normal_(mean=0.0, std=0.02)
+        self.classifier.bias.data.zero_()
         
     def forward(self, input_ids, attention_mask):
         # Get the last hidden state from BERT
@@ -28,8 +34,10 @@ class BertClassifier(nn.Module):
         # Use the [CLS] token's representation for classification
         pooled_output = outputs[0][:, 0]
         
-        # Apply dropout and classification head
+        # Apply dropout (regularization)
         pooled_output = self.dropout(pooled_output)
+        
+        # Get logits
         logits = self.classifier(pooled_output)
         
         return logits 

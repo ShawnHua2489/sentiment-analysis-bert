@@ -2,7 +2,7 @@ class Config:
     # Model parameters
     MODEL_NAME = "models/bert-base-uncased"  # Using local model path
     MAX_LENGTH = 128
-    BATCH_SIZE = 16  # Smaller batch size for CPU training
+    BATCH_SIZE = 32  # Increased batch size
     NUM_LABELS = 2  # Binary classification by default
     
     # Training parameters
@@ -14,6 +14,7 @@ class Config:
     TRAIN_SIZE = 0.8
     VAL_SIZE = 0.1
     TEST_SIZE = 0.1
+    SUBSET_SIZE = 2000  # Use a smaller subset for faster training
     
     # Paths
     DATA_DIR = "data/raw"

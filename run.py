@@ -1,3 +1,5 @@
+import os
+import sys
 import torch
 import torch.nn as nn
 from torch.optim import AdamW
@@ -8,11 +10,14 @@ from sklearn.metrics import accuracy_score, classification_report
 import pandas as pd
 import matplotlib.pyplot as plt
 import random
-import os
 
 from models.bert_classifier import BertClassifier
 from utils.data_processing import get_tokenizer, create_data_loader
 from config import Config
+
+# Baidu AI Studio paths
+datasets_prefix = '/root/paddlejob/workspace/train_data/datasets/'
+output_dir = "/root/paddlejob/workspace/output/"
 
 def load_baidu_dataset(dataset_path):
     """Load dataset from Baidu AI Studio format"""
@@ -105,7 +110,7 @@ def plot_training_curves(train_losses, val_losses, val_accuracies):
     plt.legend()
     
     plt.tight_layout()
-    plt.savefig('training_curves.png')
+    plt.savefig(os.path.join(output_dir, 'training_curves.png'))
     plt.close()
 
 def get_subset(texts, labels, size):
@@ -124,7 +129,8 @@ def main():
     tokenizer = get_tokenizer()
     
     # Load dataset from Baidu AI Studio
-    dataset_path = '/home/aistudio/data/data123456'  # This path will be provided by Baidu AI Studio
+    # Get the dataset path from command line argument or use default
+    dataset_path = sys.argv[1] if len(sys.argv) > 1 else datasets_prefix
     train_texts, train_labels, test_texts, test_labels = load_baidu_dataset(dataset_path)
     
     # Get subset for faster training
@@ -195,7 +201,7 @@ def main():
         # Early stopping
         if val_accuracy > best_val_accuracy:
             best_val_accuracy = val_accuracy
-            torch.save(model.state_dict(), f"{Config.MODEL_DIR}/bert_classifier.pt")
+            torch.save(model.state_dict(), os.path.join(output_dir, 'bert_classifier.pt'))
             print("Saved new best model!")
             patience_counter = 0
         else:
