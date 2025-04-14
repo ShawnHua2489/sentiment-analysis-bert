@@ -11,17 +11,25 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import random
 
+# Add persistent path to Python path
+sys.path.append('/home/aistudio/external-libraries')
+
 from models.bert_classifier import BertClassifier
 from utils.data_processing import get_tokenizer, create_data_loader
 from config import Config
 
 # Baidu AI Studio paths
-datasets_prefix = '/root/paddlejob/workspace/train_data/datasets/'
+datasets_prefix = '/root/paddlejob/workspace/train_data/datasets/data108104/'  # Updated with your dataset ID
 output_dir = "/root/paddlejob/workspace/output/"
 
 def load_baidu_dataset(dataset_path):
     """Load dataset from Baidu AI Studio format"""
     print("Loading dataset from Baidu AI Studio...")
+    print(f"Dataset path: {dataset_path}")
+    
+    # List files in the dataset directory
+    print("Files in dataset directory:")
+    print(os.listdir(dataset_path))
     
     # Assuming the dataset is in CSV format
     train_df = pd.read_csv(os.path.join(dataset_path, 'train.csv'))
